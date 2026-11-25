@@ -1,0 +1,6 @@
+{$MCP_DOMAIN} {
+	encode gzip
+	reverse_proxy amocrm-mcp:8000 {
+		flush_interval -1
+	}
+}

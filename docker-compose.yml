@@ -1,0 +1,30 @@
+# Запуск: docker compose up -d --build
+# С HTTPS через Caddy (нужен домен, направленный на сервер): docker compose --profile https up -d --build
+services:
+  amocrm-mcp:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "127.0.0.1:8000:8000"   # наружу только через прокси с HTTPS
+    volumes:
+      - data:/data            # выгрузки и ЖУРНАЛ ИЗМЕНЕНИЙ (не теряется при обновлении/перезапуске)
+
+  caddy:
+    profiles: ["https"]
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - MCP_DOMAIN=${MCP_DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on:
+      - amocrm-mcp
+
+volumes:
+  data:
+  caddy_data:

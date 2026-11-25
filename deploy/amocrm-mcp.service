@@ -1,0 +1,14 @@
+# Вариант без Docker: /etc/systemd/system/amocrm-mcp.service
+[Unit]
+Description=amoCRM MCP server
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/amocrm-mcp
+EnvironmentFile=/opt/amocrm-mcp/.env
+ExecStart=/opt/amocrm-mcp/venv/bin/python -m amocrm_mcp.server
+Restart=always
+User=www-data
+
+[Install]
+WantedBy=multi-user.target
